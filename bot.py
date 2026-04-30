@@ -1,13 +1,25 @@
+import os
+import threading
+from flask import Flask
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import ApplicationBuilder, CommandHandler, CallbackQueryHandler, ContextTypes
 
-import os
-TOKEN = os.getenv("8677648639:AAGgs8w5aijNTf2E5cEqdl9G2oLhQakIMGs")
+TOKEN = os.getenv("TOKEN")
 
 ADMIN_LINK = "https://t.me/theonlymarsadmin_Lucy"
-
 SG_LINK = "https://portal.fortuneprime.com/getview?view=register&token=0n6r0B"
 GLOBAL_LINK = "https://www.vantagemarkets.io/en/open-live-account/?affid=NzI2MTI3NQ=="
+
+web_app = Flask(__name__)
+
+@web_app.route("/")
+def home():
+    return "Bot is running."
+
+
+def run_web():
+    port = int(os.getenv("PORT", 10000))
+    web_app.run(host="0.0.0.0", port=port)
 
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -43,7 +55,6 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if query.data == "menu":
         await show_menu(query)
 
-    # ===== SGCN（第二张图）=====
     elif query.data == "sgcn":
         keyboard = [
             [InlineKeyboardButton("✅ I’ve Completed All Steps", url=ADMIN_LINK)],
@@ -55,29 +66,20 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await query.edit_message_text(
             f"Hi There 👋\n\n"
             f"🇸🇬 🇨🇳 How to join Fighter GTMV? Very simple!\n\n"
-
             f"Step 1:\n"
-            f"Click [HERE]({SG_LINK}) to register account with our broker FPG (Fortune Prime Global).\n\n"
-
+            f'Click <a href="{SG_LINK}"><b>HERE</b></a> to register account with our broker FPG (Fortune Prime Global).\n\n'
             f"Step 2:\n"
             f"Account type select Standard Acc and deposit min. 150USD.\n\n"
-
             f"Step 3:\n"
             f"Make sure complete KYC Account Verification.\n\n"
-
             f"Step 4:\n"
             f"Provide below details:\n\n"
-
-            f"```\n"
-            f"Full Name :\n"
-            f"Email :\n"
-            f"Trading Account Number (ID) :\n"
-            f"```",
+            f"<pre>Full Name :\nEmail :\nTrading Account Number (ID) :</pre>",
             reply_markup=InlineKeyboardMarkup(keyboard),
-            parse_mode="Markdown"
+            parse_mode="HTML",
+            disable_web_page_preview=True
         )
 
-    # ===== GLOBAL（第一张图）=====
     elif query.data == "global":
         keyboard = [
             [InlineKeyboardButton("✅ I’ve Completed All Steps", url=ADMIN_LINK)],
@@ -89,27 +91,20 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await query.edit_message_text(
             f"HOW TO STEP CLOSE WITH MARS???\n\n"
             f"Follow the step as below ⬇️\n\n"
-
-            f"1. Click [HERE]({GLOBAL_LINK}) to register your account.\n"
+            f'1. Click <a href="{GLOBAL_LINK}"><b>HERE</b></a> to register your account.\n'
             f"2. KYC Account Verification\n"
             f"3. Account type only STP Standard.\n"
             f"4. Deposit 100USD & Screenshot to us.\n"
             f"5. Provide below details\n\n"
-
-            f"```\n"
-            f"Full Name :\n"
-            f"Email :\n"
-            f"Vantage Account Number (UID) :\n"
-            f"```\n\n"
-
-            f"* Referral by : GTMars *\n\n"
+            f"<pre>Full Name :\nEmail :\nVantage Account Number (UID) :</pre>\n\n"
+            f"<b><i>Referral by : GTMars</i></b>\n\n"
             f"Once done, be patient wait for account checking.\n"
             f"Thank you 🏆",
             reply_markup=InlineKeyboardMarkup(keyboard),
-            parse_mode="Markdown"
+            parse_mode="HTML",
+            disable_web_page_preview=True
         )
 
-    # ===== IB =====
     elif query.data == "ib":
         keyboard = [
             [InlineKeyboardButton("📩 Contact Admin", url=ADMIN_LINK)],
@@ -119,22 +114,21 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await query.edit_message_text(
             "🔁 Change IB Request\n\n"
             "Kindly copy the format below and send it to our admin 👇\n\n"
-            "-------------------------\n"
-            "Full Name:\n"
-            "Email:\n"
-            "Client ID:\n"
-            "-------------------------\n\n"
+            "<pre>Full Name:\nEmail:\nClient ID:</pre>\n\n"
             "We will process your request as soon as possible 🚀",
-            reply_markup=InlineKeyboardMarkup(keyboard)
+            reply_markup=InlineKeyboardMarkup(keyboard),
+            parse_mode="HTML"
         )
 
 
-app = ApplicationBuilder().token(TOKEN).build()
+if not TOKEN:
+    raise ValueError("TOKEN is missing. Please set TOKEN in Render Environment Variables.")
 
+threading.Thread(target=run_web, daemon=True).start()
+
+app = ApplicationBuilder().token(TOKEN).build()
 app.add_handler(CommandHandler("start", start))
 app.add_handler(CallbackQueryHandler(button))
 
 print("Bot is running...")
-
 app.run_polling()
-
