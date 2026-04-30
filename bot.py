@@ -1,7 +1,8 @@
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import ApplicationBuilder, CommandHandler, CallbackQueryHandler, ContextTypes
 
-TOKEN = "8677648639:AAGgs8w5aijNTf2E5cEqdl9G2oLhQakIMGs"
+import os
+TOKEN = os.getenv("8677648639:AAGgs8w5aijNTf2E5cEqdl9G2oLhQakIMGs")
 
 ADMIN_LINK = "https://t.me/theonlymarsadmin_Lucy"
 
@@ -136,3 +137,4 @@ app.add_handler(CallbackQueryHandler(button))
 print("Bot is running...")
 
 app.run_polling()
+
