@@ -94,7 +94,7 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
             f'1. Click <a href="{GLOBAL_LINK}"><b>HERE</b></a> to register your account.\n'
             f"2. KYC Account Verification\n"
             f"3. Account type only STP Standard.\n"
-            f"4. Deposit 100USD & Screenshot to us.\n"
+            f"4. Deposit 150USD & Screenshot to us.\n"
             f"5. Provide below details\n\n"
             f"<pre>Full Name :\nEmail :\nVantage Account Number (UID) :</pre>\n\n"
             f"<b><i>Referral by : GTMars</i></b>\n\n"
