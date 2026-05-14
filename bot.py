@@ -1,5 +1,7 @@
 import os
 import threading
+from datetime import datetime
+from zoneinfo import ZoneInfo
 from flask import Flask
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import ApplicationBuilder, CommandHandler, CallbackQueryHandler, ContextTypes
@@ -9,6 +11,29 @@ TOKEN = os.getenv("TOKEN")
 ADMIN_LINK = "https://t.me/theonlymarsadmin_Lucy"
 SG_LINK = "https://portal.fortuneprime.com/getview?view=register&token=0n6r0B"
 GLOBAL_LINK = "https://www.vantagemarkets.io/en/open-live-account/?affid=NzI2MTI3NQ=="
+
+# ===== PROMO SYSTEM =====
+PROMO_TITLE = "🎉 EARLY BIRD PROMO 🔥"
+PROMO_PRICE = "70USD"
+NORMAL_PRICE = "150USD"
+
+PROMO_START = datetime(2026, 5, 14, 0, 0, tzinfo=ZoneInfo("Asia/Singapore"))
+PROMO_END = datetime(2026, 5, 31, 23, 59, tzinfo=ZoneInfo("Asia/Singapore"))
+
+
+def get_price_text():
+    now = datetime.now(ZoneInfo("Asia/Singapore"))
+
+    if PROMO_START <= now <= PROMO_END:
+        return (
+            f"{PROMO_TITLE}\n\n"
+            f"Promo Period : 14/05/2026 - 31/05/2026\n"
+            f"Current Access : {PROMO_PRICE}\n"
+            f"Normal Price : {NORMAL_PRICE}\n\n"
+        )
+
+    return f"VIP Access : {NORMAL_PRICE}\n\n"
+
 
 web_app = Flask(__name__)
 
@@ -66,6 +91,7 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await query.edit_message_text(
             f"Hi There 👋\n\n"
             f"🇸🇬 🇨🇳 How to join Fighter GTMV? Very simple!\n\n"
+            f"{get_price_text()}"
             f"Step 1:\n"
             f'Click <a href="{SG_LINK}"><b>HERE</b></a> to register account with our broker FPG (Fortune Prime Global).\n\n'
             f"Step 2:\n"
@@ -90,6 +116,7 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
         await query.edit_message_text(
             f"HOW TO STEP CLOSE WITH MARS???\n\n"
+            f"{get_price_text()}"
             f"Follow the step as below ⬇️\n\n"
             f'1. Click <a href="{GLOBAL_LINK}"><b>HERE</b></a> to register your account.\n'
             f"2. KYC Account Verification\n"
