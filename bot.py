@@ -29,7 +29,7 @@ def get_promo_text():
     if promo_active():
         return (
             f"{PROMO_TITLE}\n\n"
-            f"Promo Period : 14/05/2026 - 31/05/2026\n\n"
+            f"<b>Promo Period : 14/05/2026 - 31/05/2026</b>\n\n"
         )
     return ""
 
