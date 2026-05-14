@@ -12,7 +12,6 @@ ADMIN_LINK = "https://t.me/theonlymarsadmin_Lucy"
 SG_LINK = "https://portal.fortuneprime.com/getview?view=register&token=0n6r0B"
 GLOBAL_LINK = "https://www.vantagemarkets.io/en/open-live-account/?affid=NzI2MTI3NQ=="
 
-# ===== PROMO SYSTEM =====
 PROMO_TITLE = "🎉 EARLY BIRD PROMO 🔥"
 PROMO_PRICE = "70USD"
 NORMAL_PRICE = "150USD"
@@ -21,21 +20,26 @@ PROMO_START = datetime(2026, 5, 14, 0, 0, tzinfo=ZoneInfo("Asia/Singapore"))
 PROMO_END = datetime(2026, 5, 31, 23, 59, tzinfo=ZoneInfo("Asia/Singapore"))
 
 
-def get_price_text():
+def promo_active():
     now = datetime.now(ZoneInfo("Asia/Singapore"))
+    return PROMO_START <= now <= PROMO_END
 
-    if PROMO_START <= now <= PROMO_END:
+
+def get_promo_text():
+    if promo_active():
         return (
             f"{PROMO_TITLE}\n\n"
-            f"Promo Period : 14/05/2026 - 31/05/2026\n"
-            f"Current Access : {PROMO_PRICE}\n"
-            f"Normal Price : {NORMAL_PRICE}\n\n"
+            f"Promo Period : 14/05/2026 - 31/05/2026\n\n"
         )
+    return ""
 
-    return f"VIP Access : {NORMAL_PRICE}\n\n"
+
+def get_deposit_amount():
+    return PROMO_PRICE if promo_active() else NORMAL_PRICE
 
 
 web_app = Flask(__name__)
+
 
 @web_app.route("/")
 def home():
@@ -77,6 +81,9 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
     await query.answer()
 
+    deposit_amount = get_deposit_amount()
+    promo_text = get_promo_text()
+
     if query.data == "menu":
         await show_menu(query)
 
@@ -91,11 +98,11 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await query.edit_message_text(
             f"Hi There 👋\n\n"
             f"🇸🇬 🇨🇳 How to join Fighter GTMV? Very simple!\n\n"
-            f"{get_price_text()}"
+            f"{promo_text}"
             f"Step 1:\n"
             f'Click <a href="{SG_LINK}"><b>HERE</b></a> to register account with our broker FPG (Fortune Prime Global).\n\n'
             f"Step 2:\n"
-            f"Account type select Standard Acc and deposit min. 150USD.\n\n"
+            f"Account type select Standard Acc and deposit min. {deposit_amount}.\n\n"
             f"Step 3:\n"
             f"Make sure complete KYC Account Verification.\n\n"
             f"Step 4:\n"
@@ -116,12 +123,12 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
         await query.edit_message_text(
             f"HOW TO STEP CLOSE WITH MARS???\n\n"
-            f"{get_price_text()}"
+            f"{promo_text}"
             f"Follow the step as below ⬇️\n\n"
             f'1. Click <a href="{GLOBAL_LINK}"><b>HERE</b></a> to register your account.\n'
             f"2. KYC Account Verification\n"
             f"3. Account type only STP Standard.\n"
-            f"4. Deposit 150USD & Screenshot to us.\n"
+            f"4. Deposit {deposit_amount} & Screenshot to us.\n"
             f"5. Provide below details\n\n"
             f"<pre>Full Name :\nEmail :\nVantage Account Number (UID) :</pre>\n\n"
             f"<b><i>Referral by : GTMars</i></b>\n\n"
